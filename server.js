@@ -1,10 +1,27 @@
 const PORT = process.env.PORT || 8080
 //Définition des modules
-const express = require("express");
-const mongoose = require("mongoose");
+const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors')
+const app = express()
+const methodOverride = require('method-override')
+const mongoose = require('mongoose')
+const fileUpload = require('express-fileupload');
+// view engine setup
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
-//Connexion à la base de donnée
+app.use(methodOverride('X-HTTP-Method')) 
+app.use(methodOverride('X-HTTP-Method-Override'))
+app.use(methodOverride('X-Method-Override'))
+app.use(methodOverride('_method'))
+app.use(cors())
+app.use(fileUpload());
+app.use('/public', express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+
 mongoose.connect('mongodb://localhost/pretest', {
     useCreateIndex: true,
     useNewUrlParser: true
@@ -14,27 +31,6 @@ mongoose.connect('mongodb://localhost/pretest', {
     console.log('Error while DB connecting');
     console.log(e);
 });
-
-//On définit notre objet express nommé app
-const app = express();
-
-//Body Parser
-const urlencodedParser = bodyParser.urlencoded({
-    extended: true
-});
-app.use(urlencodedParser);
-app.use(bodyParser.json());
-
-//Définition des CORS
-app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
-
-//On définit la route Hello
 //Définition du routeur
 var router = express.Router();
 app.use('/user', router);
