@@ -60,6 +60,17 @@ exports.create = (req, res) => {
 })
 };
 
+exports.lireImage =(req, res) =>{
+    try {
+        let picture = fs.readFileSync('./controllers/public/'+req.params.photo_profil)
+        res.write(picture)
+        res.end()
+    } catch (e) {
+        console.log("erreur be miitsy", e.stack);
+    }
+}
+
+
 exports.findAll = (req, res) => {   
     Produit.find()
     .then(prods => {    
